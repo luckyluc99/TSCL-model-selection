@@ -114,7 +114,7 @@ datanames = [
     "SemgHandMovementCh2",
     "SemgHandSubjectCh2",
     "SmoothSubspace",
-    "UMD"
+    "UMD",
 ]
 
 

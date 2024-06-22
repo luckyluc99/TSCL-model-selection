@@ -1,4 +1,3 @@
-from utils.data_names import filtered_datanames
 import numpy as np
 import pandas as pd
 
@@ -8,32 +7,17 @@ from sklearn.metrics import (
     silhouette_score,
     calinski_harabasz_score,
 )
+from utils.data_names import filtered_datanames
+from utils.pairwise_distance import functions_dict
 
-from aeon.distances import (
-    euclidean_pairwise_distance,
-    dtw_pairwise_distance,
-    twe_pairwise_distance,
-    msm_pairwise_distance,
-    wdtw_pairwise_distance,
-    erp_pairwise_distance,
-)
 from utils.load_tsv import load_from_tsvfile
 
 distances = ["euclidean", "dtw", "msm", "twe", "wdtw", "erp"]
 
-functions_dict = {
-    "euclidean": euclidean_pairwise_distance,
-    "dtw": dtw_pairwise_distance,
-    "msm": msm_pairwise_distance,
-    "twe": twe_pairwise_distance,
-    "wdtw": wdtw_pairwise_distance,
-    "erp": erp_pairwise_distance,
-}
-
 results_silhouette = pd.DataFrame(columns=["datanames", "k"])
 results_davies_bouldin = pd.DataFrame(columns=["datanames", "k"])
 results_calinski_harabasz = pd.DataFrame(columns=["datanames", "k"])
-filtered_datanames = ["Beef"]
+
 for distance in distances:
     print("distance: ", distance)
     for dataname in filtered_datanames:
@@ -57,7 +41,7 @@ for distance in distances:
         davies_bouldin_scores = {}
         calinski_harabasz_scores = {}
 
-        for k in range(k_min, k_max+1):
+        for k in range(k_min, k_max + 1):
             kmedoids = KMedoids(n_clusters=k, metric="precomputed").fit(
                 pairwise_distance
             )
@@ -76,19 +60,28 @@ for distance in distances:
 
         if silhouette_scores:
             best_silhouette_k = max(silhouette_scores, key=silhouette_scores.get)
-            new_silhouette = pd.DataFrame([{"datanames": dataname, "k": best_silhouette_k}])
-            results_silhouette = pd.concat([results_silhouette, new_silhouette], ignore_index=True)
+            new_silhouette = pd.DataFrame(
+                [{"datanames": dataname, "k": best_silhouette_k}]
+            )
+            results_silhouette = pd.concat(
+                [results_silhouette, new_silhouette], ignore_index=True
+            )
 
         if davies_bouldin_scores:
             best_db_k = min(davies_bouldin_scores, key=davies_bouldin_scores.get)
             new_davies_bouldin = pd.DataFrame([{"datanames": dataname, "k": best_db_k}])
-            results_davies_bouldin = pd.concat([results_davies_bouldin, new_davies_bouldin], ignore_index=True)
+            results_davies_bouldin = pd.concat(
+                [results_davies_bouldin, new_davies_bouldin], ignore_index=True
+            )
 
         if calinski_harabasz_scores:
             best_ch_k = max(calinski_harabasz_scores, key=calinski_harabasz_scores.get)
-            new_calinski_harabasz = pd.DataFrame([{"datanames": dataname, "k": best_ch_k}])
-            results_calinski_harabasz = pd.concat([results_calinski_harabasz, new_calinski_harabasz], ignore_index=True)
-
+            new_calinski_harabasz = pd.DataFrame(
+                [{"datanames": dataname, "k": best_ch_k}]
+            )
+            results_calinski_harabasz = pd.concat(
+                [results_calinski_harabasz, new_calinski_harabasz], ignore_index=True
+            )
 
     # results_silhouette.to_csv(f"./Model selection/silhouette_{distance}.csv", index=False)
     # results_davies_bouldin.to_csv(f"./Model selection/db_{distance}.csv", index=False)
