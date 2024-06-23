@@ -13,7 +13,6 @@ noise2 = 0.2 * np.random.randn(n)
 shift = np.pi / 4
 
 # Create sine wave with second shifted and noise added
-
 sine1 = np.sin(t) + noise1
 sine2 = np.sin(t - shift) + noise2
 
