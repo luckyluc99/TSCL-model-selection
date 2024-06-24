@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import pandas as pd
 
@@ -40,7 +41,7 @@ for dataname in filtered_datanames:
 
     for distance in distance_vector:
         train_predict = np.genfromtxt(
-            f".Results/{dataname}/Kmedoids/rawdata_kmedoid/{clusterer}_{distance}_train_predict.csv",
+            f"./Results/{dataname}/Kmedoids/rawdata_kmedoid/{clusterer}_{distance}_train_predict.csv",
             delimiter=",",
         )
         test_predict = np.genfromtxt(
@@ -89,10 +90,5 @@ for dataname in filtered_datanames:
         results_train = pd.concat([results_train, new_row_train], ignore_index=True)
         results_test = pd.concat([results_test, new_row_test], ignore_index=True)
 
-    resultpath_train = f"./Modelselection_clustering/{dataname}/{clusterer}_{dataname}_output_train.csv"
-    resultpath_test = (
-        f"./Modelselection_clustering/{dataname}/{clusterer}_{dataname}_output_test.csv"
-    )
-
-    results_train.to_csv(resultpath_train, index=False)
-    results_test.to_csv(resultpath_test, index=False)
+    print("train_results:\n",results_train)
+    print("train_results:\n",results_test)
