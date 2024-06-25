@@ -1,4 +1,4 @@
-import os
+from typing import List
 import numpy as np
 import pandas as pd
 
@@ -11,7 +11,6 @@ from sklearn.metrics.cluster import (
     normalized_mutual_info_score,
 )
 from utils.load_tsv import load_from_tsvfile
-from utils.data_names import filtered_datanames
 
 column_names = [
     "distance",
@@ -23,72 +22,76 @@ column_names = [
     "normalised mutual info score",
 ]
 
-distance_vector = ["euclidean", "dtw", "msm", "twe", "wdtw", "erp"]
+def compute_measures(datanames: List[str], distances: List[str], datapath: str, resultpath: str, clusterer: str):
+    """
+    Clusterer should be either: "Kmedoid" or "Kmean"
+    """
+    for dataname in datanames:
+        trainpath = f"./{datapath}/{dataname}/{dataname}_TRAIN.tsv"
+        testpath = f"./{datapath}/{dataname}/{dataname}_TEST.tsv"
+        trainX, trainY = load_from_tsvfile(trainpath)
+        testX, testY = load_from_tsvfile(testpath)
 
-clusterer = "Kmedoid"  # "Kmean"
+        Y = np.concatenate((trainY, testY))
+        n_clust = len(np.unique(Y))
 
-for dataname in filtered_datanames:
-    trainpath = f"./data/{dataname}/{dataname}_TRAIN.tsv"
-    testpath = f"./data/{dataname}/{dataname}_TEST.tsv"
-    trainX, trainY = load_from_tsvfile(trainpath)
-    testX, testY = load_from_tsvfile(testpath)
+        results_train = pd.DataFrame(columns=column_names)
+        results_test = pd.DataFrame(columns=column_names)
 
-    Y = np.concatenate((trainY, testY))
-    n_clust = len(np.unique(Y))
+        for distance in distances:
+            train_predict = np.genfromtxt(
+                f"./{resultpath}/{dataname}/Kmedoids/rawdata_kmedoid/{clusterer}_{distance}_train_predict.csv",
+                delimiter=",",
+            )
+            test_predict = np.genfromtxt(
+                f"./{resultpath}/{dataname}/Kmedoids/rawdata_kmedoid/{clusterer}_{distance}_trainY.csv",
+                delimiter=",",
+            )
 
-    results_train = pd.DataFrame(columns=column_names)
-    results_test = pd.DataFrame(columns=column_names)
+            # Create DataFrame for train metrics
+            new_row_train = pd.DataFrame(
+                [
+                    {
+                        "distance": distance,
+                        "accuracy": clustering_accuracy_score(train_predict, trainY),
+                        "adjusted rand score": adjusted_rand_score(train_predict, trainY),
+                        "rand score": rand_score(train_predict, trainY),
+                        "mutual info score": mutual_info_score(train_predict, trainY),
+                        "adjusted mutual info score": adjusted_mutual_info_score(
+                            train_predict, trainY
+                        ),
+                        "normalised mutual info score": normalized_mutual_info_score(
+                            train_predict, trainY
+                        ),
+                    }
+                ]
+            )
 
-    for distance in distance_vector:
-        train_predict = np.genfromtxt(
-            f"./Results/{dataname}/Kmedoids/rawdata_kmedoid/{clusterer}_{distance}_train_predict.csv",
-            delimiter=",",
-        )
-        test_predict = np.genfromtxt(
-            f"./Results/{dataname}/Kmedoids/rawdata_kmedoid/{clusterer}_{distance}_trainY.csv",
-            delimiter=",",
-        )
+            # Create DataFrame for test metrics
+            new_row_test = pd.DataFrame(
+                [
+                    {
+                        "distance": distance,
+                        "accuracy": clustering_accuracy_score(test_predict, testY),
+                        "adjusted rand score": adjusted_rand_score(test_predict, testY),
+                        "rand score": rand_score(test_predict, testY),
+                        "mutual info score": mutual_info_score(test_predict, testY),
+                        "adjusted mutual info score": adjusted_mutual_info_score(
+                            test_predict, testY
+                        ),
+                        "normalised mutual info score": normalized_mutual_info_score(
+                            test_predict, testY
+                        ),
+                    }
+                ]
+            )
 
-        # Create DataFrame for train metrics
-        new_row_train = pd.DataFrame(
-            [
-                {
-                    "distance": distance,
-                    "accuracy": clustering_accuracy_score(train_predict, trainY),
-                    "adjusted rand score": adjusted_rand_score(train_predict, trainY),
-                    "rand score": rand_score(train_predict, trainY),
-                    "mutual info score": mutual_info_score(train_predict, trainY),
-                    "adjusted mutual info score": adjusted_mutual_info_score(
-                        train_predict, trainY
-                    ),
-                    "normalised mutual info score": normalized_mutual_info_score(
-                        train_predict, trainY
-                    ),
-                }
-            ]
-        )
+            results_train = pd.concat([results_train, new_row_train], ignore_index=True)
+            results_test = pd.concat([results_test, new_row_test], ignore_index=True)
+        
+        results_train.to_csv(f"./{resultpath}/measures_{datanames}.csv", index=False)
+        results_test.to_csv(f"./{resultpath}/measures_{datanames}.csv", index=False)
 
-        # Create DataFrame for test metrics
-        new_row_test = pd.DataFrame(
-            [
-                {
-                    "distance": distance,
-                    "accuracy": clustering_accuracy_score(test_predict, testY),
-                    "adjusted rand score": adjusted_rand_score(test_predict, testY),
-                    "rand score": rand_score(test_predict, testY),
-                    "mutual info score": mutual_info_score(test_predict, testY),
-                    "adjusted mutual info score": adjusted_mutual_info_score(
-                        test_predict, testY
-                    ),
-                    "normalised mutual info score": normalized_mutual_info_score(
-                        test_predict, testY
-                    ),
-                }
-            ]
-        )
 
-        results_train = pd.concat([results_train, new_row_train], ignore_index=True)
-        results_test = pd.concat([results_test, new_row_test], ignore_index=True)
-
-    print("train_results:\n",results_train)
-    print("train_results:\n",results_test)
+        # print("train_results:\n",results_train)
+        # print("train_results:\n",results_test)
