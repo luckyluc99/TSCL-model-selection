@@ -12,7 +12,7 @@ def compute_kmeans(datanames: List[str], distances: List[str], datapath: str, re
     """
     Computes the labels of both train and test sets using the k means clusterer.
     Writes the results to specified result path.
-    Distances should list of: "euclidean", "dtw", "msm", "twe", "wdtw", "erp"
+    Distance should be of type aeon.distances
     Datanames should be list of the datasets of the UCR archive, however also other datasets could be used.
     """ 
     for dataname in datanames:

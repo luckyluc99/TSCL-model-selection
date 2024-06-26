@@ -2,6 +2,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 from aeon.distances import dtw_cost_matrix, dtw_alignment_path
 
+"""
+Simulation to create a dtw alignment path with Sakoe-Chiba bands
+"""
+
 # Create time array
 n = 10
 t = np.linspace(0, np.pi, n)
@@ -15,7 +19,6 @@ shift = np.pi / 4
 # Create sine wave with second shifted and noise added
 sine1 = np.sin(t) + noise1
 sine2 = np.sin(t - shift) + noise2
-
 
 plt.figure(figsize=(8, 8))
 

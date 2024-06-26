@@ -11,8 +11,6 @@ from sklearn.metrics import (
 from utils.pairwise_distance import functions_dict
 from utils.load_tsv import load_from_tsvfile
 
-distances = ["euclidean", "dtw", "msm", "twe", "wdtw", "erp"]
-
 def model_selection(datanames: List[str], distances: List[str], datapath: str, resultpath: str):
     """
     Performs model selection using Davies-Bouldin, Silhouette and Calinksi-Harabasz indices.
