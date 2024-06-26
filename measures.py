@@ -12,7 +12,7 @@ from sklearn.metrics.cluster import (
 )
 from utils.load_tsv import load_from_tsvfile
 
-column_names = [
+metrics = [
     "distance",
     "accuracy",
     "adjusted rand score",
@@ -35,8 +35,8 @@ def compute_measures(datanames: List[str], distances: List[str], datapath: str, 
         Y = np.concatenate((trainY, testY))
         n_clust = len(np.unique(Y))
 
-        results_train = pd.DataFrame(columns=column_names)
-        results_test = pd.DataFrame(columns=column_names)
+        results_train = pd.DataFrame(columns=metrics)
+        results_test = pd.DataFrame(columns=metrics)
 
         for distance in distances:
             train_predict = np.genfromtxt(

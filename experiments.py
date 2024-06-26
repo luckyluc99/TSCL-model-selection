@@ -1,3 +1,4 @@
+import os
 import numpy as np
 
 from typing import List
@@ -16,6 +17,7 @@ def compute_kmeans(datanames: List[str], distances: List[str], datapath: str, re
     Datanames should be list of the datasets of the UCR archive, however also other datasets could be used.
     """ 
     for dataname in datanames:
+        os.makedirs(f"./{resultpath}/rawdata_kmeans/", exist_ok=True)
         print("dataset: ", dataname)
         trainpath = f"./{datapath}/{dataname}/{dataname}_TRAIN.tsv"
         testpath = f"./{datapath}/{dataname}/{dataname}_TEST.tsv"
@@ -30,7 +32,7 @@ def compute_kmeans(datanames: List[str], distances: List[str], datapath: str, re
             try:
                 train_predict, test_predict = KMeans(distance, n_clust, trainX, testX)
                 np.savetxt(
-                    f"./{resultpath}/rawdata_kmedoid/Kmean_{distance}_train_predict.csv",
+                    f"./{resultpath}/rawdata_kmeans/Kmean_{distance}_train_predict.csv",
                     train_predict,
                     delimiter=",",
                     fmt="%d",
@@ -42,13 +44,13 @@ def compute_kmeans(datanames: List[str], distances: List[str], datapath: str, re
                     fmt="%d",
                 )
                 np.savetxt(
-                    f"./{resultpath}/rawdata_kmedoid/Kmean_{distance}_test_predict.csv",
+                    f"./{resultpath}/rawdata_kmeans/Kmean_{distance}_test_predict.csv",
                     test_predict,
                     delimiter=",",
                     fmt="%d",
                 )
                 np.savetxt(
-                    f"./{resultpath}/rawdata_kmedoid/Kmean_{distance}_testY.csv",
+                    f"./{resultpath}/rawdata_kmeans/Kmean_{distance}_testY.csv",
                     testY,
                     delimiter=",",
                     fmt="%d",
@@ -65,6 +67,7 @@ def compute_kmedoids(datanames: List[str], distances: List[str], datapath: str, 
     Datanames should be list of the datasets of the UCR archive, however also other datasets could be used.
     """ 
     for dataname in datanames:
+        os.makedirs(f"./{resultpath}/rawdata_kmedoid/", exist_ok=True)
         print("dataset: ", dataname)
         trainpath = f"./{datapath}/{dataname}/{dataname}_TRAIN.tsv"
         testpath = f"./{datapath}/{dataname}/{dataname}_TEST.tsv"

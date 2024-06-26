@@ -15,7 +15,7 @@ def model_selection(datanames: List[str], distances: List[str], datapath: str, r
     """
     Performs model selection using Davies-Bouldin, Silhouette and Calinksi-Harabasz indices.
     Datanames should be a list of the UCR time series archive names
-    Distances should be of["euclidean", "dtw", "msm", "twe", "wdtw", "erp"]
+    Distance should be of type aeon.distances
     """
     results_silhouette = pd.DataFrame(columns=["datanames", "k"])
     results_davies_bouldin = pd.DataFrame(columns=["datanames", "k"])
