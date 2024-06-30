@@ -1,6 +1,7 @@
 ﻿# TSCL-model-selection
  
 Code for my bachelor thesis, for the completion of the Econometrics and Operations Research bachelor at Erasmus University Rotterdam.
+The final version of the report can be found [here](https://thesis.eur.nl/)
 
 The file experiments.py contains all the code needed to perform the kmeans and kmedoid clustering of the results of the paper by [1].
 The file measures.py contains the measures for evaluation purposes.
